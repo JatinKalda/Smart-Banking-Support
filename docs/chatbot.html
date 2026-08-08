@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HSBC ChatBot</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f5f5;
+            padding: 20px;
+        }
+
+        .chat-container {
+            max-width: 500px;
+            margin: 20px auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 30px rgba(0, 0, 0, 0.2);
+            display: flex;
+            flex-direction: column;
+            height: 600px;
+            overflow: hidden;
+        }
+
+        .chat-header {
+            background: linear-gradient(135deg, #0f3460 0%, #1a1a2e 100%);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-bottom: 3px solid #0f9ad6;
+        }
+
+        .chat-header h2 {
+            font-size: 20px;
+            margin-bottom: 5px;
+        }
+
+        .chat-header p {
+            font-size: 12px;
+            opacity: 0.9;
+        }
+
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .message {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .message.user {
+            justify-content: flex-end;
+        }
+
+        .message.bot {
+            justify-content: flex-start;
+        }
+
+        .message-bubble {
+            max-width: 70%;
+            padding: 12px 15px;
+            border-radius: 12px;
+            word-wrap: break-word;
+            line-height: 1.4;
+        }
+
+        .user .message-bubble {
+            background: linear-gradient(135deg, #0f9ad6 0%, #0a6fa0 100%);
+            color: white;
+            border-bottom-right-radius: 3px;
+        }
+
+        .bot .message-bubble {
+            background: #e0e0e0;
+            color: #333;
+            border-bottom-left-radius: 3px;
+        }
+
+        .message-time {
+            font-size: 10px;
+            opacity: 0.6;
+            margin-top: 3px;
+        }
+
+        .typing-indicator {
+            display: flex;
+            gap: 4px;
+            align-items: center;
+            padding: 12px 15px;
+            background: #e0e0e0;
+            border-radius: 12px;
+            width: fit-content;
+        }
+
+        .typing-indicator span {
+            width: 8px;
+            height: 8px;
+            background: #999;
+            border-radius: 50%;
+            animation: bounce 1.4s infinite;
+        }
+
+        .typing-indicator span:nth-child(1) { animation-delay: -0.32s; }
+        .typing-indicator span:nth-child(2) { animation-delay: -0.16s; }
+
+        @keyframes bounce {
+            0%, 60%, 100% { transform: translateY(0); }
+            30% { transform: translateY(-10px); }
+        }
+
+        .chat-input-area {
+            padding: 15px;
+            border-top: 1px solid #e0e0e0;
+            display: flex;
+            gap: 10px;
+        }
+
+        .chat-input {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+            font-family: inherit;
+            transition: border-color 0.3s;
+        }
+
+        .chat-input:focus {
+            outline: none;
+            border-color: #0f9ad6;
+        }
+
+        .send-btn {
+            padding: 12px 20px;
+            background: linear-gradient(135deg, #0f9ad6 0%, #0a6fa0 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .send-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(15, 154, 214, 0.3);
+        }
+
+        .send-btn:active {
+            transform: translateY(0);
+        }
+
+        .send-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Scrollbar styling */
+        .chat-messages::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .chat-messages::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        .chat-messages::-webkit-scrollbar-thumb {
+            background: #0f9ad6;
+            border-radius: 10px;
+        }
+
+        .chat-messages::-webkit-scrollbar-thumb:hover {
+            background: #0a6fa0;
+        }
+
+        /* Quick suggestions */
+        .quick-suggestions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            margin: 10px 0;
+        }
+
+        .suggestion-btn {
+            padding: 6px 12px;
+            background: #f0f0f0;
+            border: 1px solid #0f9ad6;
+            color: #0f9ad6;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.3s;
+        }
+
+        .suggestion-btn:hover {
+            background: #0f9ad6;
+            color: white;
+        }
+
+        /* Mobile responsive */
+        @media (max-width: 600px) {
+            .chat-container {
+                height: 500px;
+                margin: 10px auto;
+            }
+
+            .message-bubble {
+                max-width: 85%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="chat-container">
+        <div class="chat-header">
+            <h2>HSBC ChatBot 🤖</h2>
+            <p>Always here to help • Available 24/7</p>
+        </div>
+
+        <div class="chat-messages" id="chatMessages">
+            <div class="message bot">
+                <div>
+                    <div class="message-bubble">
+                        Hello! 👋 Welcome to HSBC Bank. I'm your AI Assistant. How can I help you today?
+                    </div>
+                    <div class="message-time">Just now</div>
+                </div>
+            </div>
+
+            <div class="quick-suggestions">
+                <button class="suggestion-btn" onclick="sendMessage('balance')">Check Balance</button>
+                <button class="suggestion-btn" onclick="sendMessage('transfer')">Transfer Money</button>
+                <button class="suggestion-btn" onclick="sendMessage('card')">Cards</button>
+                <button class="suggestion-btn" onclick="sendMessage('loan')">Loans</button>
+            </div>
+        </div>
+
+        <div class="chat-input-area">
+            <input 
+                type="text" 
+                class="chat-input" 
+                id="chatInput" 
+                placeholder="Type your message..."
+                onkeypress="handleKeyPress(event)"
+            >
+            <button class="send-btn" id="sendBtn" onclick="sendMessage()">Send</button>
+        </div>
+    </div>
+
+    <script>
+        const chatMessages = document.getElementById('chatMessages');
+        const chatInput = document.getElementById('chatInput');
+        const sendBtn = document.getElementById('sendBtn');
+
+        // Add message to chat
+        function addMessage(message, isUser = false) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${isUser ? 'user' : 'bot'}`;
+            
+            const now = new Date();
+            const time = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            
+            messageDiv.innerHTML = `
+                <div>
+                    <div class="message-bubble">${message.replace(/\n/g, '<br>')}</div>
+                    <div class="message-time">${time}</div>
+                </div>
+            `;
+            
+            chatMessages.appendChild(messageDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        // Show typing indicator
+        function showTyping() {
+            const typingDiv = document.createElement('div');
+            typingDiv.className = 'message bot';
+            typingDiv.id = 'typing-indicator';
+            typingDiv.innerHTML = `
+                <div class="typing-indicator">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            `;
+            chatMessages.appendChild(typingDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        // Remove typing indicator
+        function removeTyping() {
+            const typing = document.getElementById('typing-indicator');
+            if (typing) typing.remove();
+        }
+
+        // Send message
+        async function sendMessage(text = null) {
+            const message = text || chatInput.value.trim();
+            
+            if (!message) return;
+
+            addMessage(message, true);
+            chatInput.value = '';
+            sendBtn.disabled = true;
+
+            showTyping();
+
+            try {
+                const response = await fetch('/api/chatbot', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message })
+                });
+
+                const data = await response.json();
+                removeTyping();
+                
+                if (data.success) {
+                    addMessage(data.botResponse, false);
+                } else {
+                    addMessage('Sorry, I encountered an error. Please try again.', false);
+                }
+            } catch (error) {
+                removeTyping();
+                addMessage('Sorry, I\'m having trouble connecting. Please try again.', false);
+            }
+
+            sendBtn.disabled = false;
+            chatInput.focus();
+        }
+
+        // Handle Enter key
+        function handleKeyPress(event) {
+            if (event.key === 'Enter' && !event.shiftKey) {
+                event.preventDefault();
+                sendMessage();
+            }
+        }
+
+        // Focus input on load
+        chatInput.focus();
+    </script>
+</body>
+</html>

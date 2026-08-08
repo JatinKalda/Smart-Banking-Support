@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - HSBC Banking</title>
+    <link rel="stylesheet" href="css/admin.css">
+</head>
+<body>
+    <div class="admin-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo">
+                <h1>HSBC</h1>
+                <p>Admin Panel</p>
+            </div>
+            <nav class="nav">
+                <a href="#" class="nav-item active" data-section="overview">
+                    <span class="icon">📊</span>
+                    <span>Overview</span>
+                </a>
+                <a href="#" class="nav-item" data-section="users">
+                    <span class="icon">👥</span>
+                    <span>Users</span>
+                </a>
+                <a href="#" class="nav-item" data-section="transactions">
+                    <span class="icon">💳</span>
+                    <span>Transactions</span>
+                </a>
+                <a href="#" class="nav-item" data-section="tickets">
+                    <span class="icon">🎫</span>
+                    <span>Support Tickets</span>
+                </a>
+                <a href="#" class="nav-item" data-section="reports">
+                    <span class="icon">📈</span>
+                    <span>Reports</span>
+                </a>
+                <a href="#" class="nav-item" data-section="settings">
+                    <span class="icon">⚙️</span>
+                    <span>Settings</span>
+                </a>
+            </nav>
+            <button id="logoutBtn" class="logout-btn">🚪 Logout</button>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="header">
+                <div class="header-left">
+                    <h2 id="pageTitle">Dashboard Overview</h2>
+                    <p id="pageSubtitle">Welcome to your admin panel</p>
+                </div>
+                <div class="header-right">
+                    <input type="text" id="searchBox" class="search-box" placeholder="Search users, transactions...">
+                    <button id="notificationBtn" class="notification-btn">🔔 <span class="badge">3</span></button>
+                    <button id="profileBtn" class="profile-btn">👤</button>
+                </div>
+            </header>
+
+            <!-- Content Area -->
+            <div class="content">
+                <!-- OVERVIEW SECTION -->
+                <section id="overview" class="section active">
+                    <!-- Stats Cards -->
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <h3>Total Users</h3>
+                                <span class="icon">👥</span>
+                            </div>
+                            <div class="stat-body">
+                                <h1 id="totalUsers">0</h1>
+                                <p class="stat-change increase">↑ 12% this month</p>
+                            </div>
+                        </div>
+
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <h3>Total Transactions</h3>
+                                <span class="icon">💳</span>
+                            </div>
+                            <div class="stat-body">
+                                <h1 id="totalTransactions">0</h1>
+                                <p class="stat-change increase">↑ 28% this month</p>
+                            </div>
+                        </div>
+
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <h3>Total Volume</h3>
+                                <span class="icon">💰</span>
+                            </div>
+                            <div class="stat-body">
+                                <h1 id="totalVolume">$0</h1>
+                                <p class="stat-change increase">↑ 5% this month</p>
+                            </div>
+                        </div>
+
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <h3>Active Sessions</h3>
+                                <span class="icon">🟢</span>
+                            </div>
+                            <div class="stat-body">
+                                <h1 id="activeSessions">0</h1>
+                                <p class="stat-change">Right now</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Charts & Recent Activity -->
+                    <div class="overview-grid">
+                        <div class="card">
+                            <h3>Recent Users</h3>
+                            <div id="recentUsers" class="user-list">
+                                <p>Loading...</p>
+                            </div>
+                        </div>
+
+                        <div class="card">
+                            <h3>Recent Transactions</h3>
+                            <div id="recentTransactions" class="transaction-list">
+                                <p>Loading...</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- USERS SECTION -->
+                <section id="users" class="section">
+                    <div class="section-controls">
+                        <button id="addUserBtn" class="btn btn-primary">+ New User</button>
+                        <input type="text" id="userSearchInput" placeholder="Search users...">
+                    </div>
+                    <div class="table-container">
+                        <table id="usersTable" class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Name</th>
+                                    <th>Email</th>
+                                    <th>Role</th>
+                                    <th>Status</th>
+                                    <th>Joined</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="usersTableBody">
+                                <tr><td colspan="7">Loading...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- TRANSACTIONS SECTION -->
+                <section id="transactions" class="section">
+                    <div class="section-controls">
+                        <select id="transactionFilter">
+                            <option value="">All Types</option>
+                            <option value="credit">Credit</option>
+                            <option value="debit">Debit</option>
+                            <option value="transfer">Transfer</option>
+                            <option value="payment">Payment</option>
+                        </select>
+                        <input type="text" id="transactionSearchInput" placeholder="Search transactions...">
+                    </div>
+                    <div class="table-container">
+                        <table id="transactionsTable" class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>User</th>
+                                    <th>Type</th>
+                                    <th>Amount</th>
+                                    <th>Status</th>
+                                    <th>Date</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="transactionsTableBody">
+                                <tr><td colspan="7">Loading...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- SUPPORT TICKETS SECTION -->
+                <section id="tickets" class="section">
+                    <div class="section-controls">
+                        <select id="ticketFilter">
+                            <option value="">All Status</option>
+                            <option value="open">Open</option>
+                            <option value="in-progress">In Progress</option>
+                            <option value="resolved">Resolved</option>
+                        </select>
+                        <input type="text" id="ticketSearchInput" placeholder="Search tickets...">
+                    </div>
+                    <div class="table-container">
+                        <table id="ticketsTable" class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>User</th>
+                                    <th>Subject</th>
+                                    <th>Priority</th>
+                                    <th>Status</th>
+                                    <th>Date</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="ticketsTableBody">
+                                <tr><td colspan="7">Loading...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- REPORTS SECTION -->
+                <section id="reports" class="section">
+                    <div class="reports-grid">
+                        <div class="report-card">
+                            <h3>Monthly Summary</h3>
+                            <div id="monthlySummary" class="report-content">
+                                <p>Loading...</p>
+                            </div>
+                            <button class="btn btn-secondary">Export PDF</button>
+                        </div>
+
+                        <div class="report-card">
+                            <h3>User Growth</h3>
+                            <div id="userGrowth" class="report-content">
+                                <p>Loading...</p>
+                            </div>
+                            <button class="btn btn-secondary">Export CSV</button>
+                        </div>
+
+                        <div class="report-card">
+                            <h3>Transaction Stats</h3>
+                            <div id="transactionStats" class="report-content">
+                                <p>Loading...</p>
+                            </div>
+                            <button class="btn btn-secondary">Export Excel</button>
+                        </div>
+
+                        <div class="report-card">
+                            <h3>Revenue Report</h3>
+                            <div id="revenueReport" class="report-content">
+                                <p>Loading...</p>
+                            </div>
+                            <button class="btn btn-secondary">Export PDF</button>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- SETTINGS SECTION -->
+                <section id="settings" class="section">
+                    <div class="settings-grid">
+                        <div class="settings-card">
+                            <h3>System Settings</h3>
+                            <div class="setting-item">
+                                <label>Maintenance Mode</label>
+                                <input type="checkbox" id="maintenanceToggle">
+                            </div>
+                            <div class="setting-item">
+                                <label>2FA Required for All Users</label>
+                                <input type="checkbox" id="2faRequired">
+                            </div>
+                            <div class="setting-item">
+                                <label>Email Notifications</label>
+                                <input type="checkbox" id="emailNotifications" checked>
+                            </div>
+                            <button class="btn btn-primary">Save Settings</button>
+                        </div>
+
+                        <div class="settings-card">
+                            <h3>Database Info</h3>
+                            <div class="info-box">
+                                <p><strong>Host:</strong> <span id="dbHost">localhost</span></p>
+                                <p><strong>Database:</strong> <span id="dbName">hsbc_bank</span></p>
+                                <p><strong>Users Table:</strong> <span id="usersCount">0</span> records</p>
+                                <p><strong>Transactions Table:</strong> <span id="txnCount">0</span> records</p>
+                                <p><strong>Last Backup:</strong> <span id="lastBackup">Never</span></p>
+                            </div>
+                            <button class="btn btn-secondary">Backup Database</button>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <script src="js/auth.js"></script>
+    <script src="js/admin.js"></script>
+</body>
+</html>

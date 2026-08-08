@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings - HSBC Banking</title>
+    <link rel="stylesheet" href="css/dashboard.css">
+</head>
+<body class="dark-theme">
+    <div class="dashboard-container">
+        <!-- Navbar -->
+        <nav class="navbar">
+            <div class="navbar-content">
+                <div class="navbar-brand">
+                    <h1>HSBC</h1>
+                </div>
+                <div class="navbar-menu">
+                    <a href="/dashboard" class="nav-link">Dashboard</a>
+                    <a href="/cards" class="nav-link">Cards</a>
+                    <a href="/transfers" class="nav-link">Transfers</a>
+                    <a href="/settings" class="nav-link active">Settings</a>
+                    <button id="logoutBtn" class="nav-btn">Logout</button>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Header -->
+            <div class="dashboard-header">
+                <div>
+                    <h2>Account Settings ⚙️</h2>
+                    <p>Manage your account preferences</p>
+                </div>
+            </div>
+
+            <!-- Settings Grid -->
+            <div class="cards-grid">
+                <!-- Profile Settings -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Profile Information</h3>
+                    </div>
+                    <div class="card-body">
+                        <form id="profileForm">
+                            <div style="margin-bottom: 1rem;">
+                                <label style="display: block; margin-bottom: 0.5rem; color: white;">First Name</label>
+                                <input type="text" id="firstName" placeholder="First Name" style="width: 100%; padding: 0.75rem; border: 1px solid rgba(15, 173, 214, 0.3); border-radius: 5px; background-color: rgba(15, 173, 214, 0.05); color: white;">
+                            </div>
+                            <div style="margin-bottom: 1rem;">
+                                <label style="display: block; margin-bottom: 0.5rem; color: white;">Last Name</label>
+                                <input type="text" id="lastName" placeholder="Last Name" style="width: 100%; padding: 0.75rem; border: 1px solid rgba(15, 173, 214, 0.3); border-radius: 5px; background-color: rgba(15, 173, 214, 0.05); color: white;">
+                            </div>
+                            <div style="margin-bottom: 1rem;">
+                                <label style="display: block; margin-bottom: 0.5rem; color: white;">Email</label>
+                                <input type="email" id="email" placeholder="Email" disabled style="width: 100%; padding: 0.75rem; border: 1px solid rgba(15, 173, 214, 0.3); border-radius: 5px; background-color: rgba(15, 173, 214, 0.05); color: var(--text-secondary);">
+                            </div>
+                            <button type="submit" class="btn btn-primary" style="width: 100%;">Save Profile</button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Security Settings -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Security & Privacy</h3>
+                    </div>
+                    <div class="card-body">
+                        <div style="margin-bottom: 1.5rem;">
+                            <label style="display: flex; align-items: center; gap: 0.75rem; cursor: pointer; color: white;">
+                                <input type="checkbox" id="twoFactorAuth">
+                                <span>Enable Two-Factor Authentication</span>
+                            </label>
+                            <p style="color: var(--text-secondary); font-size: 0.85rem; margin-top: 0.5rem;">Add an extra layer of security to your account</p>
+                        </div>
+
+                        <div style="margin-bottom: 1.5rem;">
+                            <label style="display: flex; align-items: center; gap: 0.75rem; cursor: pointer; color: white;">
+                                <input type="checkbox" id="biometricAuth">
+                                <span>Enable Biometric Login</span>
+                            </label>
+                            <p style="color: var(--text-secondary); font-size: 0.85rem; margin-top: 0.5rem;">Use fingerprint or face to login</p>
+                        </div>
+
+                        <button type="button" id="changePasswordBtn" class="btn btn-secondary" style="width: 100%;">Change Password</button>
+                    </div>
+                </div>
+
+                <!-- Notification Settings -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Notifications</h3>
+                    </div>
+                    <div class="card-body">
+                        <div style="margin-bottom: 1rem;">
+                            <label style="display: flex; align-items: center; gap: 0.75rem; cursor: pointer; color: white;">
+                                <input type="checkbox" id="emailNotifications" checked>
+                                <span>Email Notifications</span>
+                            </label>
+                        </div>
+
+                        <div style="margin-bottom: 1rem;">
+                            <label style="display: flex; align-items: center; gap: 0.75rem; cursor: pointer; color: white;">
+                                <input type="checkbox" id="smsNotifications" checked>
+                                <span>SMS Notifications</span>
+                            </label>
+                        </div>
+
+                        <div style="margin-bottom: 1rem;">
+                            <label style="display: flex; align-items: center; gap: 0.75rem; cursor: pointer; color: white;">
+                                <input type="checkbox" id="pushNotifications" checked>
+                                <span>Push Notifications</span>
+                            </label>
+                        </div>
+
+                        <button type="button" id="saveNotificationsBtn" class="btn btn-primary" style="width: 100%;">Save Preferences</button>
+                    </div>
+                </div>
+
+                <!-- Privacy & Data -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Privacy & Data</h3>
+                    </div>
+                    <div class="card-body">
+                        <div style="margin-bottom: 1rem;">
+                            <p style="color: white; margin-bottom: 0.75rem;">Data Storage Location</p>
+                            <select id="dataLocation" style="width: 100%; padding: 0.75rem; border: 1px solid rgba(15, 173, 214, 0.3); border-radius: 5px; background-color: rgba(15, 173, 214, 0.05); color: white;">
+                                <option value="us">United States</option>
+                                <option value="eu" selected>European Union</option>
+                                <option value="uk">United Kingdom</option>
+                            </select>
+                        </div>
+
+                        <div style="margin-bottom: 1rem;">
+                            <label style="display: flex; align-items: center; gap: 0.75rem; cursor: pointer; color: white;">
+                                <input type="checkbox" id="dataSharing">
+                                <span>Allow data sharing with partners</span>
+                            </label>
+                        </div>
+
+                        <button type="button" id="downloadDataBtn" class="btn btn-secondary" style="width: 100%; margin-bottom: 0.75rem;">Download Your Data</button>
+                        <button type="button" id="deleteDataBtn" class="btn btn-secondary" style="width: 100%;">Delete Account</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/auth.js"></script>
+    <script>
+        async function getCurrentUser() {
+            const userStr = sessionStorage.getItem('user') || localStorage.getItem('currentUser');
+            if (!userStr) { window.location.href = '/'; return null; }
+            try { return JSON.parse(userStr); } catch (e) { return null; }
+        }
+
+        async function loadUserData() {
+            const user = await getCurrentUser();
+            if (!user) return;
+
+            document.getElementById('firstName').value = user.firstName || '';
+            document.getElementById('lastName').value = user.lastName || '';
+            document.getElementById('email').value = user.email || '';
+
+            try {
+                const resp = await fetch('/api/user/preferences');
+                if (resp.ok) {
+                    const data = await resp.json();
+                    const p = data.preferences || {};
+                    document.getElementById('emailNotifications').checked = !!p.emailNotifications;
+                    document.getElementById('smsNotifications').checked = !!p.smsNotifications;
+                    document.getElementById('pushNotifications').checked = !!p.pushNotifications;
+                    document.getElementById('twoFactorAuth').checked = !!p.twoFaEnabled;
+                }
+            } catch (e) {
+                console.error('Could not load preferences', e);
+            }
+        }
+
+        document.getElementById('profileForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const resp = await fetch('/api/user/profile', {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    firstName: document.getElementById('firstName').value,
+                    lastName: document.getElementById('lastName').value
+                })
+            });
+            const data = await resp.json();
+            if (data.success) {
+                const user = await getCurrentUser();
+                user.firstName = document.getElementById('firstName').value;
+                user.lastName = document.getElementById('lastName').value;
+                sessionStorage.setItem('user', JSON.stringify(user));
+                alert('Profile updated successfully!');
+            } else {
+                alert('Error: ' + data.message);
+            }
+        });
+
+        document.getElementById('changePasswordBtn').addEventListener('click', async () => {
+            const currentPassword = prompt('Enter current password:');
+            if (!currentPassword) return;
+            const newPassword = prompt('Enter new password (min 6 chars):');
+            if (!newPassword || newPassword.length < 6) {
+                alert('Password must be at least 6 characters');
+                return;
+            }
+            const resp = await fetch('/api/user/password', {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ currentPassword, newPassword })
+            });
+            const data = await resp.json();
+            alert(data.success ? 'Password changed successfully!' : 'Error: ' + data.message);
+        });
+
+        document.getElementById('saveNotificationsBtn').addEventListener('click', async () => {
+            const resp = await fetch('/api/user/preferences', {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    emailNotifications: document.getElementById('emailNotifications').checked,
+                    smsNotifications: document.getElementById('smsNotifications').checked,
+                    pushNotifications: document.getElementById('pushNotifications').checked
+                })
+            });
+            const data = await resp.json();
+            alert(data.success ? 'Notification preferences saved!' : 'Error: ' + data.message);
+        });
+
+        document.getElementById('downloadDataBtn').addEventListener('click', () => {
+            window.open('/api/user/export', '_blank');
+        });
+
+        document.getElementById('deleteDataBtn').addEventListener('click', async () => {
+            if (!confirm('Are you sure you want to delete your account? This cannot be undone!')) return;
+            const resp = await fetch('/api/user/account', { method: 'DELETE' });
+            const data = await resp.json();
+            if (data.success) {
+                window.auth?.clearAuth();
+                alert('Account deleted.');
+                window.location.href = '/';
+            } else {
+                alert('Error: ' + data.message);
+            }
+        });
+
+        document.getElementById('twoFactorAuth').addEventListener('change', (e) => {
+            if (e.target.checked) {
+                window.location.href = '/dashboard';
+            }
+        });
+
+        document.getElementById('logoutBtn').addEventListener('click', () => {
+            if (confirm('Are you sure you want to logout?')) {
+                window.auth?.clearAuth();
+                window.location.href = '/';
+            }
+        });
+
+        document.querySelectorAll('.navbar-menu .nav-link').forEach((link, index) => {
+            link.addEventListener('click', (e) => {
+                if (!link.classList.contains('active')) {
+                    e.preventDefault();
+                    const urls = ['/dashboard', '/cards', '/transfers', '/settings'];
+                    window.location.href = urls[index];
+                }
+            });
+        });
+
+        loadUserData();
+    </script>
+</body>
+</html>

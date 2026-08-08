@@ -1,0 +1,47 @@
+{
+  "name": "hsbc-bank-website",
+  "version": "2.0.0",
+  "description": "HSBC Bank Login and Signup Website with Dark Theme & MySQL Support",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server-mysql.js",
+    "start:sqlite": "node server.js",
+    "start:mysql": "node server-mysql.js",
+    "dev": "node server-mysql.js",
+    "prod": "node server-mysql.js",
+    "setup": "node setup-database.js",
+    "build": "vite build",
+    "smoke": "node -e \"require('./server-mysql'); setTimeout(() => process.exit(0), 1000)\""
+  },
+  "keywords": [
+    "bank",
+    "login",
+    "signup",
+    "dark-theme",
+    "mysql"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "body-parser": "^1.20.2",
+    "cookie-parser": "^1.4.6",
+    "cors": "^2.8.5",
+    "dotenv": "^17.3.1",
+    "express": "^4.18.2",
+    "helmet": "^7.1.0",
+    "lucide-react": "^0.359.0",
+    "mysql2": "^3.17.1",
+    "nodemailer": "^6.10.1",
+    "openai": "^6.22.0",
+    "path": "^0.12.7",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "redis": "^4.7.0",
+    "sqlite3": "^5.1.6"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.2.1",
+    "vite": "^5.2.0"
+  }
+}

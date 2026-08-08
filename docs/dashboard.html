@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - HSBC Banking</title>
+    <link rel="stylesheet" href="css/dashboard.css">
+    <link rel="stylesheet" href="css/chatbot-widget.css">
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Navbar -->
+        <nav class="navbar">
+            <div class="navbar-content">
+                <div class="navbar-brand">
+                    <h1>HSBC</h1>
+                </div>
+                <div class="navbar-menu">
+                    <a href="#" class="nav-link">Dashboard</a>
+                    <a href="#" class="nav-link">Cards</a>
+                    <a href="#" class="nav-link">Transfers</a>
+                    <a href="#" class="nav-link">Settings</a>
+                    <button id="logoutBtn" class="nav-btn">Logout</button>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Header -->
+            <div class="dashboard-header">
+                <div>
+                    <h2>Welcome back, <span id="userName">User</span>!</h2>
+                    <p>Here's your account summary</p>
+                </div>
+                <div class="header-icon">👋</div>
+            </div>
+
+            <!-- Cards Grid -->
+            <div class="cards-grid">
+                <!-- Account Balance Card -->
+                <div class="card account-card">
+                    <div class="card-header">
+                        <h3>Account Balance</h3>
+                        <span class="card-icon">💰</span>
+                    </div>
+                    <div class="card-body">
+                        <p class="balance-label">Total Balance</p>
+                        <h1 class="balance-amount" id="balanceAmount">$0.00</h1>
+                        <p class="balance-info">Available for withdrawal</p>
+                    </div>
+                    <div class="card-footer">
+                        <small>Updated just now</small>
+                    </div>
+                </div>
+
+                <!-- Quick Stats Card -->
+                <div class="card stats-card">
+                    <div class="card-header">
+                        <h3>This Month</h3>
+                        <span class="card-icon">📊</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="stat-item">
+                            <span class="stat-label">Spent</span>
+                            <span class="stat-value" id="monthSpent">$0.00</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Received</span>
+                            <span class="stat-value" id="monthReceived">$0.00</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Actions Card -->
+                <div class="card actions-card">
+                    <div class="card-header">
+                        <h3>Quick Actions</h3>
+                        <span class="card-icon">⚡</span>
+                    </div>
+                    <div class="card-body">
+                        <button class="action-btn">
+                            <span class="action-icon">📤</span>
+                            <span>Send Money</span>
+                        </button>
+                        <button class="action-btn">
+                            <span class="action-icon">💳</span>
+                            <span>Card Details</span>
+                        </button>
+                        <button class="action-btn">
+                            <span class="action-icon">📜</span>
+                            <span>Statements</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Transactions Section -->
+            <div class="transactions-section">
+                <div class="section-header">
+                    <h3>Recent Transactions</h3>
+                    <a href="#" class="view-all">View All →</a>
+                </div>
+                <div class="transactions-list" id="transactionsList">
+                    <div class="loading">
+                        <p>Loading transactions...</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Security Section -->
+            <div class="security-section">
+                <div class="section-header">
+                    <h3>Security</h3>
+                </div>
+                <div class="security-cards">
+                    <div class="security-item">
+                        <div class="security-icon">🔒</div>
+                        <div class="security-info">
+                            <h4>Two-Factor Authentication</h4>
+                            <p id="twoFaStatus">Disabled</p>
+                        </div>
+                        <button id="enable2faBtn" class="btn-small">Enable</button>
+                    </div>
+                    <div class="security-item">
+                        <div class="security-icon">👤</div>
+                        <div class="security-info">
+                            <h4>Profile Settings</h4>
+                            <p>Update your personal information</p>
+                        </div>
+                        <button class="btn-small">Edit</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2FA Modal -->
+    <div id="twoFaModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Enable Two-Factor Authentication</h2>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="twofa-steps">
+                    <div class="step active" id="step1">
+                        <h3>Step 1: Choose Verification Method</h3>
+                        <div class="method-options">
+                            <label class="method-option">
+                                <input type="radio" name="2fa-method" value="email" checked>
+                                <span class="method-label">📧 Email OTP</span>
+                            </label>
+                            <label class="method-option">
+                                <input type="radio" name="2fa-method" value="sms">
+                                <span class="method-label">📱 SMS OTP</span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="step" id="step2">
+                        <h3>Step 2: Verify Your <span id="methodType">Email</span></h3>
+                        <p>We'll send a code to your <span id="methodTarget">email address</span></p>
+                        <div class="form-group">
+                            <label for="verifyTarget">Enter your <span id="targetLabel">email</span>:</label>
+                            <input type="email" id="verifyTarget" placeholder="example@email.com">
+                        </div>
+                        <button id="sendCodeBtn" class="btn-primary">Send Code</button>
+                    </div>
+                    <div class="step" id="step3">
+                        <h3>Step 3: Verify Code</h3>
+                        <p>Enter the code sent to your <span id="methodTarget2">email</span></p>
+                        <div class="form-group">
+                            <label for="otpCode">OTP Code:</label>
+                            <input type="text" id="otpCode" placeholder="000000" maxlength="6">
+                        </div>
+                        <button id="verifyCodeBtn" class="btn-primary">Verify & Enable</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Chatbot Widget -->
+    <script src="js/auth.js"></script>
+    <script src="js/chatbot-widget.js"></script>
+    <script>
+        // Initialize chatbot widget
+        new ChatbotWidget();
+    </script>
+
+    <!-- Dashboard Scripts -->
+    <script src="js/dashboard.js"></script>
+</body>
+</html>

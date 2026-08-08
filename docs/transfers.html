@@ -1,0 +1,981 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Send Money - HSBC Banking</title>
+    <link rel="stylesheet" href="css/dashboard.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0f0f23 0%, #1a1f3a 100%);
+            color: #fff;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+        }
+
+        .transfer-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            padding: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        @media (max-width: 1024px) {
+            .transfer-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Balance Cards */
+        .balance-section {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .balance-card {
+            background: linear-gradient(135deg, rgba(15, 173, 214, 0.1) 0%, rgba(15, 173, 214, 0.05) 100%);
+            border: 1px solid rgba(15, 173, 214, 0.3);
+            border-radius: 16px;
+            padding: 2rem;
+            backdrop-filter: blur(10px);
+        }
+
+        .balance-label {
+            font-size: 0.95rem;
+            color: rgba(255, 255, 255, 0.6);
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 500;
+        }
+
+        .balance-amount {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #0f9ad6;
+            margin-bottom: 1rem;
+            font-family: 'Courier New', monospace;
+        }
+
+        .balance-status {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.9rem;
+            padding-top: 1rem;
+            border-top: 1px solid rgba(15, 173, 214, 0.2);
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.4rem 0.8rem;
+            background-color: rgba(76, 175, 80, 0.15);
+            border: 1px solid rgba(76, 175, 80, 0.3);
+            border-radius: 20px;
+            font-size: 0.85rem;
+            color: #4caf50;
+            margin-top: 1rem;
+        }
+
+        .status-badge.warning {
+            background-color: rgba(244, 67, 54, 0.15);
+            border-color: rgba(244, 67, 54, 0.3);
+            color: #f44336;
+        }
+
+        /* Recent Transactions */
+        .transactions-section {
+            background: linear-gradient(135deg, rgba(15, 173, 214, 0.08) 0%, rgba(15, 173, 214, 0.03) 100%);
+            border: 1px solid rgba(15, 173, 214, 0.2);
+            border-radius: 16px;
+            padding: 2rem;
+            backdrop-filter: blur(10px);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid rgba(15, 173, 214, 0.2);
+        }
+
+        .section-header h3 {
+            font-size: 1.3rem;
+            font-weight: 600;
+        }
+
+        .refresh-btn {
+            background: none;
+            border: 1px solid rgba(15, 173, 214, 0.3);
+            color: #0f9ad6;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: all 0.3s ease;
+        }
+
+        .refresh-btn:hover {
+            background-color: rgba(15, 173, 214, 0.1);
+            border-color: rgba(15, 173, 214, 0.6);
+        }
+
+        .transactions-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            max-height: 450px;
+            overflow-y: auto;
+        }
+
+        .transaction-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            background-color: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(15, 173, 214, 0.15);
+            border-radius: 12px;
+            transition: all 0.2s ease;
+        }
+
+        .transaction-item:hover {
+            background-color: rgba(255, 255, 255, 0.05);
+            border-color: rgba(15, 173, 214, 0.3);
+        }
+
+        .transaction-info {
+            flex: 1;
+        }
+
+        .transaction-type {
+            font-weight: 600;
+            font-size: 0.95rem;
+            margin-bottom: 0.3rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .transaction-type.debit::before {
+            content: "↗";
+            color: #ff9800;
+            font-weight: bold;
+        }
+
+        .transaction-type.credit::before {
+            content: "↙";
+            color: #4caf50;
+            font-weight: bold;
+        }
+
+        .transaction-details {
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .transaction-amount {
+            text-align: right;
+        }
+
+        .transaction-value {
+            font-weight: 700;
+            font-size: 1rem;
+            font-family: 'Courier New', monospace;
+        }
+
+        .transaction-value.debit {
+            color: #ff9800;
+        }
+
+        .transaction-value.credit {
+            color: #4caf50;
+        }
+
+        .transaction-time {
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.4);
+            margin-top: 0.2rem;
+        }
+
+        /* Transfer Form */
+        .transfer-form-section {
+            background: linear-gradient(135deg, rgba(15, 173, 214, 0.1) 0%, rgba(15, 173, 214, 0.05) 100%);
+            border: 1px solid rgba(15, 173, 214, 0.3);
+            border-radius: 16px;
+            padding: 2rem;
+            backdrop-filter: blur(10px);
+        }
+
+        .form-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-subtitle {
+            font-size: 0.95rem;
+            color: rgba(255, 255, 255, 0.6);
+            margin-bottom: 2rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            font-weight: 600;
+            font-size: 0.95rem;
+            margin-bottom: 0.7rem;
+            color: #fff;
+        }
+
+        .form-label .required {
+            color: #ff6b6b;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 0.9rem 1rem;
+            background-color: rgba(15, 173, 214, 0.05);
+            border: 1px solid rgba(15, 173, 214, 0.3);
+            border-radius: 10px;
+            color: #fff;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            font-family: inherit;
+        }
+
+        .form-input:focus {
+            outline: none;
+            background-color: rgba(15, 173, 214, 0.1);
+            border-color: rgba(15, 173, 214, 0.6);
+            box-shadow: 0 0 0 3px rgba(15, 173, 214, 0.1);
+        }
+
+        .form-input::placeholder {
+            color: rgba(255, 255, 255, 0.4);
+        }
+
+        .form-hint {
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.5);
+            margin-top: 0.4rem;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .form-hint-right {
+            cursor: pointer;
+            color: #0f9ad6;
+            font-weight: 500;
+        }
+
+        .form-hint-right:hover {
+            text-decoration: underline;
+        }
+
+        .form-validation {
+            font-size: 0.85rem;
+            margin-top: 0.4rem;
+            font-weight: 500;
+        }
+
+        .form-validation.valid {
+            color: #4caf50;
+        }
+
+        .form-validation.invalid {
+            color: #f44336;
+        }
+
+        .amount-controls {
+            display: flex;
+            gap: 1rem;
+            align-items: flex-end;
+        }
+
+        .amount-controls .form-group {
+            flex: 1;
+            margin-bottom: 0;
+        }
+
+        .max-btn {
+            background-color: rgba(15, 173, 214, 0.2);
+            border: 1px solid rgba(15, 173, 214, 0.3);
+            color: #0f9ad6;
+            padding: 0.9rem 1rem;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+        }
+
+        .max-btn:hover {
+            background-color: rgba(15, 173, 214, 0.3);
+            border-color: rgba(15, 173, 214, 0.6);
+        }
+
+        .form-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .btn-primary, .btn-secondary {
+            padding: 1rem;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #0f9ad6 0%, #0a7aad 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(15, 173, 214, 0.3);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+
+        .btn-secondary {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: #0f9ad6;
+            border: 1px solid rgba(15, 173, 214, 0.3);
+        }
+
+        .btn-secondary:hover {
+            background-color: rgba(255, 255, 255, 0.15);
+            border-color: rgba(15, 173, 214, 0.6);
+        }
+
+        /* Modal */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            animation: fadeInOverlay 0.3s ease;
+            backdrop-filter: blur(3px);
+        }
+
+        .modal-overlay.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        @keyframes fadeInOverlay {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal-content {
+            background: linear-gradient(135deg, #1a1f3a 0%, #242c3c 100%);
+            border: 1px solid rgba(15, 173, 214, 0.3);
+            border-radius: 16px;
+            width: 90%;
+            max-width: 500px;
+            animation: slideUpModal 0.3s ease;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+        }
+
+        @keyframes slideUpModal {
+            from {
+                transform: translateY(30px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .modal-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid rgba(15, 173, 214, 0.2);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h3 {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: rgba(255, 255, 255, 0.6);
+            cursor: pointer;
+            transition: color 0.2s ease;
+        }
+
+        .modal-close:hover {
+            color: #fff;
+        }
+
+        .modal-body {
+            padding: 2rem;
+        }
+
+        .confirm-detail {
+            margin-bottom: 1.5rem;
+        }
+
+        .confirm-label {
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.6);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.5rem;
+            display: block;
+            font-weight: 600;
+        }
+
+        .confirm-value {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #0f9ad6;
+            word-break: break-all;
+        }
+
+        .confirm-value.amount {
+            color: #0f9ad6;
+            font-family: 'Courier New', monospace;
+        }
+
+        .otp-section {
+            background-color: rgba(15, 173, 214, 0.1);
+            border: 1px solid rgba(15, 173, 214, 0.3);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+        }
+
+        .otp-input {
+            width: 100%;
+            padding: 1rem;
+            background-color: rgba(15, 173, 214, 0.05);
+            border: 2px solid rgba(15, 173, 214, 0.3);
+            border-radius: 10px;
+            color: #fff;
+            font-size: 1.5rem;
+            letter-spacing: 10px;
+            text-align: center;
+            font-family: 'Courier New', monospace;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .otp-input:focus {
+            outline: none;
+            border-color: #0f9ad6;
+            background-color: rgba(15, 173, 214, 0.1);
+            box-shadow: 0 0 0 3px rgba(15, 173, 214, 0.1);
+        }
+
+        .otp-note {
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.6);
+            margin-top: 0.8rem;
+            text-align: center;
+        }
+
+        .modal-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .modal-buttons .btn-secondary {
+            padding: 0.9rem;
+        }
+
+        .modal-buttons .btn-primary {
+            padding: 0.9rem;
+        }
+
+        /* Scrollbar */
+        .transactions-list::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .transactions-list::-webkit-scrollbar-track {
+            background: rgba(15, 173, 214, 0.1);
+            border-radius: 10px;
+        }
+
+        .transactions-list::-webkit-scrollbar-thumb {
+            background: rgba(15, 173, 214, 0.3);
+            border-radius: 10px;
+        }
+
+        .transactions-list::-webkit-scrollbar-thumb:hover {
+            background: rgba(15, 173, 214, 0.5);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 2rem;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .empty-state-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 2rem;
+            color: #0f9ad6;
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-content">
+            <div class="navbar-brand">
+                <h1>HSBC</h1>
+            </div>
+            <div class="navbar-menu">
+                <a href="/dashboard" class="nav-link">Dashboard</a>
+                <a href="/cards" class="nav-link">Cards</a>
+                <a href="/transfers" class="nav-link active">Transfers</a>
+                <a href="/settings" class="nav-link">Settings</a>
+                <button id="logoutBtn" class="nav-btn">Logout</button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="transfer-container">
+        <!-- Left Column: Balance & Transactions -->
+        <div class="balance-section">
+            <!-- Main Balance Card -->
+            <div class="balance-card">
+                <div class="balance-label">Account Balance</div>
+                <div class="balance-amount" id="accountBalance">$0.00</div>
+                <div class="balance-status">
+                    <div>
+                        <div style="font-size: 0.8rem; margin-bottom: 0.3rem;">Available Balance</div>
+                        <div style="font-size: 1.1rem; font-weight: 600; color: #4caf50;" id="availableBalance">$0.00</div>
+                    </div>
+                    <div style="text-align: right;">
+                        <div style="font-size: 0.8rem; margin-bottom: 0.3rem;">Status</div>
+                        <div class="status-badge">
+                            <span style="font-size: 0.6rem;">●</span> Active
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Transactions -->
+            <div class="transactions-section">
+                <div class="section-header">
+                    <h3>Recent Transfers</h3>
+                    <button class="refresh-btn" id="refreshBtn">🔄 Refresh</button>
+                </div>
+                <div class="transactions-list" id="recentTransfers">
+                    <div class="empty-state">
+                        <div class="empty-state-icon">📋</div>
+                        <div style="font-size: 0.9rem;">No transfers yet</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Column: Transfer Form -->
+        <div class="transfer-form-section">
+            <h2 class="form-title">Send Money</h2>
+            <p class="form-subtitle">Transfer funds to another account instantly</p>
+
+            <form id="transferForm">
+                <!-- Recipient -->
+                <div class="form-group">
+                    <label class="form-label">Recipient Email <span class="required">*</span></label>
+                    <input type="email" id="recipientEmail" class="form-input" placeholder="Enter recipient's email address" required>
+                    <div class="form-hint">
+                        <span id="recipientStatus"></span>
+                    </div>
+                </div>
+
+                <!-- Amount -->
+                <div class="form-group">
+                    <label class="form-label">Amount <span class="required">*</span></label>
+                    <div class="amount-controls">
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <input type="number" id="transferAmount" class="form-input" placeholder="0.00" min="0.01" step="0.01" required>
+                        </div>
+                        <button type="button" class="max-btn" id="maxBtn">MAX</button>
+                    </div>
+                    <div class="form-validation" id="amountStatus"></div>
+                </div>
+
+                <!-- Description -->
+                <div class="form-group">
+                    <label class="form-label">Description (Optional)</label>
+                    <textarea id="transferDescription" class="form-input" placeholder="What's this transfer for?" style="resize: vertical; min-height: 80px; font-family: inherit;"></textarea>
+                    <div class="form-hint" style="color: rgba(255, 255, 255, 0.4);">
+                        <span id="charCount">0</span>&nbsp;<span style="color: rgba(255, 255, 255, 0.3);">/ 100 characters</span>
+                    </div>
+                </div>
+
+                <!-- Buttons -->
+                <div class="form-buttons">
+                    <button type="submit" class="btn-primary" id="submitBtn">Send Now</button>
+                    <button type="reset" class="btn-secondary">Clear Form</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Confirmation Modal -->
+    <div class="modal-overlay" id="confirmModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Confirm Transfer</h3>
+                <button type="button" class="modal-close" id="closeModalBtn">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="confirm-detail">
+                    <label class="confirm-label">Transfer To</label>
+                    <div class="confirm-value" id="confirmRecipient">-</div>
+                </div>
+
+                <div class="confirm-detail">
+                    <label class="confirm-label">Amount</label>
+                    <div class="confirm-value amount" id="confirmAmount">$0.00</div>
+                </div>
+
+                <div class="otp-section">
+                    <label class="confirm-label" style="margin-bottom: 1rem;">Enter OTP (One-Time Password)</label>
+                    <div id="testOtpDisplay" style="background-color: rgba(76, 175, 80, 0.15); border: 1px solid rgba(76, 175, 80, 0.3); border-radius: 8px; padding: 0.8rem; margin-bottom: 1rem; text-align: center; display: none;">
+                        <div style="font-size: 0.75rem; color: rgba(255, 255, 255, 0.6); margin-bottom: 0.3rem;">🧪 TEST MODE - Your OTP:</div>
+                        <div id="displayedOtp" style="font-size: 1.5rem; font-weight: 700; color: #4caf50; letter-spacing: 4px; font-family: 'Courier New', monospace;"></div>
+                        <button type="button" id="copyOtpBtn" style="margin-top: 0.5rem; background-color: rgba(76, 175, 80, 0.2); border: 1px solid #4caf50; color: #4caf50; padding: 0.4rem 0.8rem; border-radius: 4px; font-size: 0.8rem; cursor: pointer; transition: all 0.2s ease;">📋 Copy OTP</button>
+                    </div>
+                    <input type="text" id="otpInput" class="otp-input" placeholder="000000" maxlength="6" inputmode="numeric">
+                    <div class="otp-note">🧪 Testing Mode: OTP is shown above. Enter it to confirm transfer.</div>
+                </div>
+
+                <div class="modal-buttons">
+                    <button type="button" class="btn-secondary" id="modalCancelBtn">Cancel</button>
+                    <button type="button" class="btn-primary" id="confirmTransferBtn">Confirm Transfer</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/auth.js"></script>
+    <script>
+        // Get current user
+        async function getCurrentUser() {
+            let userStr = sessionStorage.getItem('user') || localStorage.getItem('currentUser');
+            if (!userStr) return null;
+            try { return JSON.parse(userStr); } catch (e) { return null; }
+        }
+
+        // Load account balance
+        async function loadAccountBalance() {
+            try {
+                const user = await getCurrentUser();
+                if (!user) return;
+
+                const resp = await fetch('/api/account');
+                if (!resp.ok) return;
+
+                const data = await resp.json();
+                const balance = parseFloat(data.balance || 0);
+                const available = parseFloat(data.available || balance);
+
+                document.getElementById('accountBalance').textContent = `$${balance.toFixed(2)}`;
+                document.getElementById('availableBalance').textContent = `$${available.toFixed(2)}`;
+            } catch (err) {
+                console.error('Balance load error:', err);
+            }
+        }
+
+        // Validate amount
+        function validateAmount() {
+            const amount = parseFloat(document.getElementById('transferAmount').value) || 0;
+            const available = parseFloat(document.getElementById('availableBalance').textContent.replace('$', ''));
+            const status = document.getElementById('amountStatus');
+
+            if (!amount || amount <= 0) {
+                status.textContent = '';
+                return true;
+            }
+
+            if (amount > available) {
+                status.innerHTML = '❌ Amount exceeds available balance';
+                status.className = 'form-validation invalid';
+                return false;
+            } else {
+                status.innerHTML = '✓ Amount valid';
+                status.className = 'form-validation valid';
+                return true;
+            }
+        }
+
+        // Load recent transfers
+        async function loadRecentTransfers(userId) {
+            const container = document.getElementById('recentTransfers');
+            container.innerHTML = '<div class="loading">Loading transfers...</div>';
+
+            try {
+                const resp = await fetch(`/api/transactions?userId=${userId}`);
+                if (!resp.ok) throw new Error('API error');
+
+                const json = await resp.json();
+                const txns = json.transactions || [];
+
+                if (txns.length === 0) {
+                    container.innerHTML = `<div class="empty-state">
+                        <div class="empty-state-icon">📋</div>
+                        <div style="font-size: 0.9rem;">No transfers yet</div>
+                    </div>`;
+                    return;
+                }
+
+                container.innerHTML = '';
+                txns.slice(0, 10).forEach(t => {
+                    const date = new Date(t.createdAt);
+                    const typeClass = t.type === 'debit' ? 'debit' : 'credit';
+                    const arrow = t.type === 'debit' ? '↗️' : '↙️';
+
+                    const item = document.createElement('div');
+                    item.className = 'transaction-item';
+                    item.innerHTML = `
+                        <div class="transaction-info">
+                            <div class="transaction-type ${typeClass}">
+                                ${t.type === 'debit' ? 'You Sent' : 'You Received'}
+                            </div>
+                            <div class="transaction-details">${t.description || 'Transfer'}</div>
+                            <div class="transaction-time">${date.toLocaleString()}</div>
+                        </div>
+                        <div class="transaction-amount">
+                            <div class="transaction-value ${typeClass}">
+                                ${t.type === 'debit' ? '-' : '+'}$${parseFloat(t.amount).toFixed(2)}
+                            </div>
+                        </div>
+                    `;
+                    container.appendChild(item);
+                });
+            } catch (err) {
+                console.error('Error loading transfers:', err);
+                container.innerHTML = '<div class="empty-state"><div style="color: #f44336;">⚠️ Could not load transfers</div></div>';
+            }
+        }
+
+        // Event Listeners
+        document.getElementById('transferAmount').addEventListener('input', validateAmount);
+
+        document.getElementById('transferDescription').addEventListener('input', (e) => {
+            const count = e.target.value.length;
+            document.getElementById('charCount').textContent = Math.min(count, 100);
+            if (count > 100) {
+                e.target.value = e.target.value.substring(0, 100);
+            }
+        });
+
+        document.getElementById('maxBtn').addEventListener('click', (e) => {
+            e.preventDefault();
+            const available = parseFloat(document.getElementById('availableBalance').textContent.replace('$', ''));
+            const maxAmount = Math.max(0, available - 0.50);
+            document.getElementById('transferAmount').value = maxAmount.toFixed(2);
+            validateAmount();
+        });
+
+        document.getElementById('refreshBtn').addEventListener('click', async () => {
+            await loadAccountBalance();
+            const user = await getCurrentUser();
+            if (user) await loadRecentTransfers(user.id);
+        });
+
+        // Form submission
+        document.getElementById('transferForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const user = await getCurrentUser();
+            if (!user) {
+                alert('Please login to send transfers');
+                return;
+            }
+
+            const email = document.getElementById('recipientEmail').value.trim();
+            const amount = parseFloat(document.getElementById('transferAmount').value);
+            const description = document.getElementById('transferDescription').value.trim();
+
+            if (!validateAmount()) return;
+
+            // Show modal
+            window.pendingTransfer = { userId: user.id, email, amount, description };
+            document.getElementById('confirmRecipient').textContent = email;
+            document.getElementById('confirmAmount').textContent = `$${amount.toFixed(2)}`;
+            document.getElementById('otpInput').value = '';
+            document.getElementById('confirmModal').classList.add('active');
+
+            // Generate OTP for testing
+            window.generatedOTP = Math.floor(100000 + Math.random() * 900000).toString();
+            
+            // Display OTP in the modal for testing
+            document.getElementById('testOtpDisplay').style.display = 'block';
+            document.getElementById('displayedOtp').textContent = window.generatedOTP;
+            
+            // Also log to console for debugging
+            console.log(`🔐 OTP for testing: ${window.generatedOTP}`);
+        });
+
+        // Modal controls
+        document.getElementById('closeModalBtn').addEventListener('click', () => {
+            document.getElementById('confirmModal').classList.remove('active');
+        });
+
+        document.getElementById('modalCancelBtn').addEventListener('click', () => {
+            document.getElementById('confirmModal').classList.remove('active');
+        });
+
+        document.getElementById('confirmModal').addEventListener('click', (e) => {
+            if (e.target.id === 'confirmModal') {
+                document.getElementById('confirmModal').classList.remove('active');
+            }
+        });
+
+        // OTP confirmation
+        document.getElementById('confirmTransferBtn').addEventListener('click', async () => {
+            const otp = document.getElementById('otpInput').value.trim();
+
+            if (!otp || otp.length !== 6) {
+                alert('Please enter a 6-digit OTP');
+                return;
+            }
+
+            if (otp !== window.generatedOTP) {
+                alert('Invalid OTP. Try again.');
+                document.getElementById('otpInput').focus();
+                return;
+            }
+
+            // Proceed with transfer
+            const transfer = window.pendingTransfer;
+            try {
+                const response = await fetch('/api/transactions', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        userId: transfer.userId,
+                        amount: transfer.amount,
+                        description: transfer.description || `Transfer to ${transfer.email}`,
+                        recipientEmail: transfer.email
+                    })
+                });
+
+                const data = await response.json();
+
+                if (response.ok && data.success) {
+                    alert(`✅ Transfer Successful!\n\nReference: ${data.reference}\nNew Balance: $${data.senderBalanceAfter?.toFixed(2)}`);
+
+                    // Close modal and reset form
+                    document.getElementById('confirmModal').classList.remove('active');
+                    document.getElementById('transferForm').reset();
+                    document.getElementById('amountStatus').textContent = '';
+
+                    // Refresh balance and transactions IMMEDIATELY
+                    await loadAccountBalance();
+                    const user = await getCurrentUser();
+                    if (user) await loadRecentTransfers(user.id);
+                } else {
+                    alert('❌ Transfer Failed: ' + (data.message || 'Unknown error'));
+                }
+            } catch (error) {
+                console.error('Transfer error:', error);
+                alert('Error: ' + error.message);
+            }
+        });
+
+        // Allow Enter key for OTP
+        document.getElementById('otpInput').addEventListener('keyup', (e) => {
+            if (e.key === 'Enter' && document.getElementById('otpInput').value.length === 6) {
+                document.getElementById('confirmTransferBtn').click();
+            }
+        });
+
+        // Copy OTP button
+        document.getElementById('copyOtpBtn').addEventListener('click', (e) => {
+            e.preventDefault();
+            const otp = window.generatedOTP;
+            navigator.clipboard.writeText(otp).then(() => {
+                const btn = document.getElementById('copyOtpBtn');
+                const originalText = btn.textContent;
+                btn.textContent = '✅ Copied!';
+                setTimeout(() => {
+                    btn.textContent = originalText;
+                }, 2000);
+                document.getElementById('otpInput').focus();
+            });
+        });
+
+        // Page load
+        (async () => {
+            const user = await getCurrentUser();
+            if (user) {
+                await loadAccountBalance();
+                await loadRecentTransfers(user.id);
+                setInterval(loadAccountBalance, 30000);
+            }
+        })();
+
+        // Logout
+        document.getElementById('logoutBtn').addEventListener('click', () => {
+            if (confirm('Are you sure you want to logout?')) {
+                window.auth?.clearAuth();
+                window.location.href = '/';
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,12 @@
+{
+  "hello": "Hello! Welcome to HSBC Support. How can I help you today?",
+  "hi": "Hi there! How can I assist with your HSBC account?",
+  "balance": "To check your balance, login to your account dashboard or call our support line. Would you like steps to view it online?",
+  "transfer": "To transfer money: 1) Login 2) Go to Transfers 3) Enter recipient details 4) Confirm. Do you want a transfer walkthrough?",
+  "cards": "We offer debit, credit, and virtual cards. Which card would you like to know about?",
+  "loan": "HSBC offers personal, home and auto loans. Which one interests you?",
+  "loans": "HSBC offers personal, home and auto loans. Which one interests you?",
+  "help": "You can ask me about balance, transfers, cards, loans, or say 'agent' to request a live agent.",
+  "agent": "Connecting you to a live agent. Please provide a short summary of your issue so we can route you correctly.",
+  "contact": "You can email support@hsbc.com or call 1-800-HSBC-USA for immediate assistance."
+}

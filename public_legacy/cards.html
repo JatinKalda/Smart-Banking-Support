@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Cards - HSBC Banking</title>
+    <link rel="stylesheet" href="css/dashboard.css">
+    <link rel="stylesheet" href="css/cards.css">
+</head>
+<body class="dark-theme">
+    <div class="container">
+        <!-- Navigation -->
+        <nav class="navbar">
+            <div class="nav-content">
+                <a href="/" class="logo">HSBC</a>
+                <div class="nav-links">
+                    <a href="/dashboard">Dashboard</a>
+                    <a href="/cards" class="active">Cards</a>
+                    <a href="#" id="logoutLink">Logout</a>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="cards-main">
+            <!-- Header -->
+            <header class="cards-header">
+                <div class="header-content">
+                    <h1>💳 Manage Your Cards</h1>
+                    <p>View and manage your payment cards</p>
+                </div>
+                <button id="addCardBtn" class="btn btn-primary">+ Add New Card</button>
+            </header>
+
+            <!-- Cards Container -->
+            <section class="cards-section">
+                <div id="cardsContainer" class="cards-grid">
+                    <p class="loading">Loading your cards...</p>
+                </div>
+            </section>
+
+            <!-- Card Details Modal -->
+            <div id="cardModal" class="modal">
+                <div class="modal-content">
+                    <span class="close">&times;</span>
+                    <h2>Card Details</h2>
+                    <div id="cardDetailsContent"></div>
+                    <div class="modal-actions">
+                        <button id="blockCardBtn" class="btn btn-danger">Block Card</button>
+                        <button id="setLimitsBtn" class="btn btn-primary">Set Spending Limits</button>
+                        <button id="closeCardModalBtn" class="btn btn-secondary">Close</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Add Card Modal -->
+            <div id="addCardModal" class="modal">
+                <div class="modal-content">
+                    <span class="close">&times;</span>
+                    <h2>Add New Card</h2>
+                    <form id="addCardForm">
+                        <div class="form-group">
+                            <label>Card Holder Name</label>
+                            <input type="text" id="cardholderName" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Card Type</label>
+                            <select id="cardType" required>
+                                <option value="debit">Debit Card</option>
+                                <option value="credit">Credit Card</option>
+                                <option value="virtual">Virtual Card</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Provider</label>
+                            <select id="cardProvider" required>
+                                <option value="Visa">Visa</option>
+                                <option value="Mastercard">Mastercard</option>
+                                <option value="AmEx">American Express</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Spending Limit (Monthly)</label>
+                            <input type="number" id="spendingLimit" placeholder="5000" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Daily Limit</label>
+                            <input type="number" id="dailyLimit" placeholder="500" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Add Card</button>
+                        <button type="button" id="cancelAddBtn" class="btn btn-secondary">Cancel</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Spending Limits Modal -->
+            <div id="limitsModal" class="modal">
+                <div class="modal-content">
+                    <span class="close">&times;</span>
+                    <h2>Set Spending Limits</h2>
+                    <form id="limitsForm">
+                        <div class="form-group">
+                            <label>Monthly Limit</label>
+                            <input type="number" id="monthlyLimit" placeholder="5000" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Daily Limit</label>
+                            <input type="number" id="dailyLimitInput" placeholder="500" required>
+                        </div>
+                        <div class="form-info">
+                            <p>Current Usage: <strong id="currentUsage">$0.00</strong> / <strong id="limitAmount">$5000</strong></p>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Save Limits</button>
+                        <button type="button" id="cancelLimitsBtn" class="btn btn-secondary">Cancel</button>
+                    </form>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="js/auth.js"></script>
+    <script src="js/cards.js"></script>
+</body>
+</html>
