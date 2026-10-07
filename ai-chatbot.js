@@ -2,25 +2,17 @@ const express = require('express');
 const fs = require('fs');
 const path = require('path');
 require('dotenv').config();
-const OpenAI = require('openai');
 const pool = require('./db-mysql');
 const { optionalAuth } = require('./middleware/auth');
 const { auditLog } = require('./services/audit-service');
 const { createRateLimiter } = require('./services/rate-limiter');
 
 const router = express.Router();
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY
-});
 
-const AI_MODEL = process.env.OPENAI_MODEL || 'gpt-5-mini';
-const EMBEDDING_MODEL = process.env.OPENAI_EMBEDDING_MODEL || 'text-embedding-3-small';
-const GEMINI_MODEL = process.env.GEMINI_MODEL || 'gemini-1.5-flash';
+const GEMINI_MODEL = process.env.GEMINI_MODEL || 'gemini-2.5-flash';
 const MAX_MESSAGE_CHARS = Number(process.env.AI_MAX_MESSAGE_CHARS || 1000);
 const RATE_LIMIT_WINDOW_MS = Number(process.env.AI_RATE_LIMIT_WINDOW_MS || 60_000);
 const RATE_LIMIT_MAX_REQUESTS = Number(process.env.AI_RATE_LIMIT_MAX_REQUESTS || 20);
-const OPENAI_VECTOR_STORE_ID = process.env.OPENAI_VECTOR_STORE_ID || '';
-const ENABLE_OPENAI_MODERATION = process.env.ENABLE_OPENAI_MODERATION === 'true';
 
 const aiRateLimit = createRateLimiter({
   prefix: 'ai-chatbot',
@@ -182,29 +174,8 @@ function reviewBankingSafety(message) {
 }
 
 async function runModerationReview(message) {
-  const localReview = reviewBankingSafety(message);
-  if (localReview.blocked || !ENABLE_OPENAI_MODERATION || !process.env.OPENAI_API_KEY) {
-    return localReview;
-  }
-
-  try {
-    const moderation = await openai.moderations.create({
-      model: process.env.OPENAI_MODERATION_MODEL || 'omni-moderation-latest',
-      input: message
-    });
-    const flagged = Boolean(moderation.results?.[0]?.flagged);
-    return flagged
-      ? {
-          blocked: true,
-          category: 'moderation_flagged',
-          answer: 'I cannot help with that request. Please contact support for safe banking assistance.',
-          escalate: true
-        }
-      : localReview;
-  } catch (error) {
-    console.warn('Moderation API failed, using local safety review:', error.message);
-    return localReview;
-  }
+  // Local safety review only (no external moderation API needed)
+  return reviewBankingSafety(message);
 }
 
 function cosineSimilarity(a, b) {
@@ -257,26 +228,9 @@ function buildStructuredFallback(userMessage, safetyReview = reviewBankingSafety
   };
 }
 
-async function getRelevantFaqContext(message) {
-  if (faqEmbeddings.length === 0 || !process.env.OPENAI_API_KEY || process.env.OPENAI_API_KEY.startsWith('sk-xx') || process.env.OPENAI_API_KEY.includes('your-')) {
-    return { context: '', sourceMatches: [] };
-  }
-
-  const embResp = await openai.embeddings.create({
-    model: EMBEDDING_MODEL,
-    input: message
-  });
-
-  const qEmb = embResp.data[0].embedding;
-  const scored = faqEmbeddings
-    .map((item) => ({ ...item, score: cosineSimilarity(qEmb, item.embedding) }))
-    .sort((a, b) => b.score - a.score)
-    .slice(0, 3);
-
-  return {
-    context: scored.map((s) => `- ${s.text}`).join('\n'),
-    sourceMatches: scored.map((s) => ({ id: s.id, score: Number(s.score.toFixed(4)) }))
-  };
+async function getRelevantFaqContext() {
+  // FAQ embedding lookup disabled (no OpenAI embeddings needed with Gemini)
+  return { context: '', sourceMatches: [] };
 }
 
 function parseStructuredAi(text, fallback) {
@@ -441,31 +395,15 @@ router.post('/api/ai-chatbot', optionalAuth, aiRateLimit, async (req, res) => {
         }
       }
 
-      // Try Gemini first
+      // Try Gemini (primary and only AI engine)
       try {
         const geminiResult = await generateGeminiResponse(message, context, fallback);
         if (geminiResult) {
           provider = geminiResult.provider;
           structured = geminiResult.structured;
-        } else {
-          // If Gemini returned null, try OpenAI as secondary fallback
-          const openAiResult = await generateOpenAiResponse(message, context, fallback);
-          if (openAiResult) {
-            provider = openAiResult.provider;
-            structured = openAiResult.structured;
-          }
         }
       } catch (geminiError) {
-        console.warn('Gemini API failed, attempting OpenAI:', geminiError.message);
-        try {
-          const openAiResult = await generateOpenAiResponse(message, context, fallback);
-          if (openAiResult) {
-            provider = openAiResult.provider;
-            structured = openAiResult.structured;
-          }
-        } catch (openaiError) {
-          console.warn('OpenAI API failed, using rule-based fallback:', openaiError.message);
-        }
+        console.warn('Gemini API failed, using rule-based fallback:', geminiError.message);
       }
     }
 

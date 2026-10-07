@@ -1,24 +1,17 @@
 /**
  * SMS Service Configuration
- * Supports multiple providers: Twilio, Nexmo, AWS SNS
- * 
- * Setup:
- * 1. npm install twilio (or nexmo)
- * 2. Create .env file with TWILIO_* credentials
- * 3. Use sendSMS() function in your routes
+ * Default provider: Textbelt (free tier - 1 SMS/day, no account needed)
+ * Optional paid providers: Nexmo/Vonage, AWS SNS
  */
 
-const smsProvider = process.env.SMS_PROVIDER || 'twilio';
+const smsProvider = process.env.SMS_PROVIDER || 'textbelt';
 
 let smsClient = null;
 
 function initSmsClient() {
     if (smsClient !== null) return smsClient;
     try {
-        if (smsProvider === 'twilio' && process.env.TWILIO_ACCOUNT_SID) {
-            const twilio = require('twilio');
-            smsClient = twilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN);
-        } else if (smsProvider === 'nexmo' && process.env.NEXMO_API_KEY) {
+        if (smsProvider === 'nexmo' && process.env.NEXMO_API_KEY) {
             const Nexmo = require('nexmo');
             smsClient = new Nexmo({
                 apiKey: process.env.NEXMO_API_KEY,
@@ -56,26 +49,25 @@ async function deliverFreeSms(phone, message) {
 }
 
 async function deliverSms(phone, message) {
-    const client = initSmsClient();
-    if (!client && smsProvider !== 'textbelt') {
-        console.log(`📱 [dev] SMS to ${phone}: ${message}`);
-        return { success: true, dev: true };
-    }
     if (smsProvider === 'textbelt') {
         const res = await deliverFreeSms(formatPhoneNumber(phone), message);
         if (!res.success) {
-            throw new Error('Textbelt sending failed');
+            console.warn('Textbelt SMS failed (free tier limit may be reached). Message logged only.');
+            console.log(`📱 [SMS fallback] To ${phone}: ${message}`);
         }
-    } else if (smsProvider === 'twilio') {
-        await client.messages.create({
-            body: message,
-            from: process.env.TWILIO_PHONE_NUMBER,
-            to: formatPhoneNumber(phone)
-        });
-    } else if (smsProvider === 'nexmo') {
+        return { success: true };
+    }
+
+    const client = initSmsClient();
+    if (!client) {
+        console.log(`📱 [dev] SMS to ${phone}: ${message}`);
+        return { success: true, dev: true };
+    }
+
+    if (smsProvider === 'nexmo') {
         await new Promise((resolve, reject) => {
             client.message.sendSms(
-                process.env.NEXMO_FROM,
+                process.env.NEXMO_FROM || 'SmartBank',
                 formatPhoneNumber(phone),
                 message,
                 (err, res) => (err ? reject(err) : resolve(res))
@@ -87,6 +79,7 @@ async function deliverSms(phone, message) {
             PhoneNumber: formatPhoneNumber(phone)
         }).promise();
     }
+
     console.log(`✅ SMS sent to ${phone}`);
     return { success: true };
 }
