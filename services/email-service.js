@@ -66,8 +66,13 @@ async function deliverEmail(options) {
         console.log(`📧 [dev] Email to ${options.to}: ${options.subject}`);
         return { success: true, dev: true };
     }
-    await mailer.sendMail(options);
-    return { success: true };
+    try {
+        await mailer.sendMail(options);
+        return { success: true };
+    } catch (error) {
+        console.error(`❌ Error sending email to ${options.to}:`, error.message);
+        return { success: false, error: error.message };
+    }
 }
 
 /**

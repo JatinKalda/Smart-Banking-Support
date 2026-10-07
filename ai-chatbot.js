@@ -417,6 +417,30 @@ router.post('/api/ai-chatbot', optionalAuth, aiRateLimit, async (req, res) => {
         console.warn('FAQ context embedding failed, proceeding without context:', embError.message);
       }
 
+      // If user is authenticated, query live account & transaction context from MySQL
+      if (req.auth && req.auth.id) {
+        try {
+          const conn = await pool.getConnection();
+          const [accs] = await conn.query('SELECT accountType, balance FROM accounts WHERE userId = ?', [req.auth.id]);
+          const [stats] = await conn.query(
+            `SELECT 
+              COALESCE(SUM(CASE WHEN type IN ('debit','payment') THEN amount ELSE 0 END), 0) as spent,
+              COALESCE(SUM(CASE WHEN type = 'credit' THEN amount ELSE 0 END), 0) as received
+             FROM transactions WHERE userId = ? AND MONTH(createdAt) = MONTH(NOW()) AND YEAR(createdAt) = YEAR(NOW())`,
+            [req.auth.id]
+          );
+          conn.release();
+
+          const totalBal = accs.reduce((sum, a) => sum + parseFloat(a.balance || 0), 0);
+          const accDetails = accs.map(a => `${a.accountType.toUpperCase()}: $${parseFloat(a.balance).toLocaleString()}`).join(', ');
+          const userContextStr = `LIVE USER ACCOUNT DATA (ID: ${req.auth.id}): Total Balance: $${totalBal.toLocaleString()} (${accDetails}). Spent this month: $${parseFloat(stats[0]?.spent || 0).toLocaleString()}. Income received this month: $${parseFloat(stats[0]?.received || 0).toLocaleString()}. Use these real figures when answering user balance/spending questions!`;
+
+          context = `${userContextStr}\n\n${context}`;
+        } catch (dbErr) {
+          console.warn('Could not inject user live context:', dbErr.message);
+        }
+      }
+
       // Try Gemini first
       try {
         const geminiResult = await generateGeminiResponse(message, context, fallback);

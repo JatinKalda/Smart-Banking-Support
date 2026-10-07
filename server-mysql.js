@@ -13,6 +13,7 @@ const { signJwt, requireAuth, requireAdmin } = require('./middleware/auth');
 const { ensureAuditTable, auditLog } = require('./services/audit-service');
 const { registerApiExtensions, otpStore, getNotifications } = require('./routes/api-extensions');
 const googleAuthRouter = require('./routes/google-auth');
+const aiFeaturesRouter = require('./routes/ai-features');
 
 const app = express();
 const PORT = 3000;
@@ -32,6 +33,9 @@ app.use(chatbotRouter);
 
 // AI Chatbot routes (RAG with fallback)
 app.use(aiChatRouter);
+
+// AI Features router (Cashflow, Fraud, Subscriptions, OCR, Health, Voice)
+app.use(aiFeaturesRouter);
 
 // Google Auth routes
 app.use(googleAuthRouter);

@@ -13,6 +13,11 @@ import Accounts from './pages/Accounts';
 import Transfers from './pages/Transfers';
 import Transactions from './pages/Transactions';
 import AIAssistant from './pages/AIAssistant';
+import AICashFlowOracle from './pages/AICashFlowOracle';
+import AIFraudGuardian from './pages/AIFraudGuardian';
+import AISubscriptionHunter from './pages/AISubscriptionHunter';
+import AIReceiptScanner from './pages/AIReceiptScanner';
+import AIFinancialHealth from './pages/AIFinancialHealth';
 import Investments from './pages/Investments';
 import Contact from './pages/Contact';
 import Admin from './pages/Admin';
@@ -50,6 +55,21 @@ export default function App() {
         break;
       case 'ai-assistant':
         setTitle('Copilot Intelligence Workspace');
+        break;
+      case 'ai-cashflow':
+        setTitle('AI CashFlow Oracle & Balance Forecaster');
+        break;
+      case 'ai-fraud':
+        setTitle('AI Fraud Guardian & Risk Console');
+        break;
+      case 'ai-subscriptions':
+        setTitle('AI Subscription Vampire Hunter');
+        break;
+      case 'ai-receipts':
+        setTitle('AI Receipt OCR & Auto-Ledger');
+        break;
+      case 'ai-health':
+        setTitle('360° AI Financial Health Diagnostics');
         break;
       case 'investments':
         setTitle('Wealth Portfolio');
@@ -108,6 +128,16 @@ export default function App() {
         return <Transactions user={user} />;
       case 'ai-assistant':
         return <AIAssistant user={user} />;
+      case 'ai-cashflow':
+        return <AICashFlowOracle user={user} />;
+      case 'ai-fraud':
+        return <AIFraudGuardian user={user} />;
+      case 'ai-subscriptions':
+        return <AISubscriptionHunter user={user} />;
+      case 'ai-receipts':
+        return <AIReceiptScanner user={user} />;
+      case 'ai-health':
+        return <AIFinancialHealth user={user} />;
       case 'investments':
         return <Investments />;
       case 'contact':
@@ -119,8 +149,6 @@ export default function App() {
     }
   };
 
-  // Determine if we should render layout container wrapper (only if logged in or viewing private page)
-  // But wait, to keep it clean, if viewing Home, Login, or Register, we don't render Sidebar/Header
   const isPlainPage = ['home', 'login', 'register'].includes(currentRoute);
 
   if (isPlainPage) {

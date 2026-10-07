@@ -271,7 +271,7 @@ export default function Dashboard({ user, setCurrentRoute }) {
           </div>
 
           {/* AI Copilot Prompt Panel */}
-          <div className="glass-panel" style={{ padding: '24px', background: 'linear-gradient(135deg, rgba(124,58,237,0.1) 0%, rgba(79,70,229,0.1) 100%)', border: '1px solid var(--border-glow)' }}>
+          <div className="glass-panel" style={{ padding: '24px', background: 'linear-gradient(135deg, #e6f4ee 0%, #ffffff 100%)', border: '1px solid var(--border-color)' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px', color: 'var(--accent)', marginBottom: '12px' }}>
               <Sparkles size={20} />
               <h4 style={{ fontWeight: 700, fontSize: '0.95rem' }}>AI Financial Insights</h4>

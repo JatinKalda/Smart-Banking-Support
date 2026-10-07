@@ -637,7 +637,7 @@ export default function Transfers({ user }) {
                           padding: '16px 20px',
                           borderRadius: '14px',
                           border: isSelected ? '2px solid var(--primary)' : '1px solid var(--border-color)',
-                          background: isSelected ? 'rgba(124, 58, 237, 0.08)' : 'rgba(255,255,255,0.01)',
+                          background: isSelected ? '#e6f4ee' : '#f8faf9',
                           cursor: 'pointer',
                           display: 'flex',
                           justifyContent: 'space-between',
@@ -738,7 +738,7 @@ export default function Transfers({ user }) {
                           )}
 
                           {limit !== null && timeInfo.active && (
-                            <div style={{ background: 'rgba(124, 58, 237, 0.08)', border: '1px solid var(--border-glow)', padding: '10px 14px', borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--accent)', fontSize: '0.75rem' }}>
+                            <div style={{ background: '#e6f4ee', border: '1px solid var(--border-color)', padding: '10px 14px', borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--primary)', fontSize: '0.75rem' }}>
                               <ShieldAlert size={16} />
                               <span>First 24h Limit Active: Max ₹50,000 can be transferred (Cooling Cap).</span>
                             </div>
@@ -937,7 +937,7 @@ export default function Transfers({ user }) {
                   </div>
                 </div>
 
-                <div className="glass-panel" style={{ padding: '20px', background: 'linear-gradient(135deg, rgba(124,58,237,0.03) 0%, rgba(79,70,229,0.03) 100%)', fontSize: '0.8rem', lineHeight: 1.4, color: 'var(--text-muted)' }}>
+                <div className="glass-panel" style={{ padding: '20px', background: 'linear-gradient(135deg, #e6f4ee 0%, #ffffff 100%)', fontSize: '0.8rem', lineHeight: 1.4, color: 'var(--text-muted)' }}>
                   <h5 style={{ fontWeight: 700, color: '#fff', marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '6px' }}>
                     <Info size={14} style={{ color: 'var(--accent)' }} />
                     <span>Transaction Regulations</span>
@@ -1000,7 +1000,7 @@ export default function Transfers({ user }) {
               </div>
 
               <form onSubmit={handleConfirmTransfer} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-                <div style={{ background: 'rgba(124, 58, 237, 0.08)', border: '1px solid var(--border-glow)', padding: '16px', borderRadius: '12px', display: 'flex', alignItems: 'center', gap: '12px', color: 'var(--accent)', fontSize: '0.8rem' }}>
+                <div style={{ background: '#e6f4ee', border: '1px solid var(--border-color)', padding: '16px', borderRadius: '12px', display: 'flex', alignItems: 'center', gap: '12px', color: 'var(--primary)', fontSize: '0.8rem' }}>
                   <ShieldAlert size={18} style={{ flexShrink: 0 }} />
                   <span>{otpMessage}</span>
                 </div>

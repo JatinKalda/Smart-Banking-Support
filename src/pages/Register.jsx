@@ -83,7 +83,6 @@ export default function Register({ onLoginSuccess, setCurrentRoute }) {
       if (data.success) {
         localStorage.setItem('token', data.token);
         localStorage.setItem('user', JSON.stringify(data.user));
-        
         onLoginSuccess(data.user);
       } else {
         setError(data.message || 'Registration failed');
@@ -101,12 +100,12 @@ export default function Register({ onLoginSuccess, setCurrentRoute }) {
       {/* Left Form Panel */}
       <div className="glass-panel" style={{ padding: '40px', display: 'flex', flexDirection: 'column', gap: '20px' }}>
         <div>
-          <h2 style={{ fontSize: '1.75rem', fontWeight: 800 }}>Create Your Account</h2>
+          <h2 style={{ fontSize: '1.75rem', fontWeight: 800, color: 'var(--text-primary)' }}>Create Your Account</h2>
           <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', marginTop: '4px' }}>Join SmartBank today and experience secure next-gen banking.</p>
         </div>
 
         {error && (
-          <div style={{ background: 'rgba(239, 68, 68, 0.1)', border: '1px solid rgba(239, 68, 68, 0.2)', padding: '12px', borderRadius: '8px', color: 'var(--danger)', fontSize: '0.85rem' }}>
+          <div style={{ background: '#ffebeb', border: '1px solid rgba(255, 90, 96, 0.3)', padding: '12px', borderRadius: '10px', color: '#ff5a60', fontSize: '0.85rem' }}>
             {error}
           </div>
         )}
@@ -115,7 +114,7 @@ export default function Register({ onLoginSuccess, setCurrentRoute }) {
 
         <div style={{ display: 'flex', alignItems: 'center' }}>
           <div style={{ flex: 1, height: '1px', background: 'var(--border-color)' }}></div>
-          <span style={{ padding: '0 10px', color: 'var(--text-muted)', fontSize: '0.85rem' }}>OR</span>
+          <span style={{ padding: '0 10px', color: 'var(--text-muted)', fontSize: '0.85rem', fontWeight: 600 }}>OR</span>
           <div style={{ flex: 1, height: '1px', background: 'var(--border-color)' }}></div>
         </div>
 
@@ -232,18 +231,17 @@ export default function Register({ onLoginSuccess, setCurrentRoute }) {
         </form>
 
         <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', textAlign: 'center' }}>
-          Already have an account? <a onClick={() => setCurrentRoute('login')} style={{ color: 'var(--accent)', cursor: 'pointer', fontWeight: 600 }}>Login</a>
+          Already have an account? <a onClick={() => setCurrentRoute('login')} style={{ color: 'var(--primary)', cursor: 'pointer', fontWeight: 600 }}>Login</a>
         </p>
       </div>
 
       {/* Right Graphic Panel */}
-      <div className="glass-panel" style={{ padding: '40px', background: 'linear-gradient(135deg, rgba(124, 58, 237, 0.15) 0%, rgba(79, 70, 229, 0.15) 100%)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center', gap: '20px' }}>
+      <div className="glass-panel" style={{ padding: '40px', background: 'linear-gradient(135deg, #e6f4ee 0%, #ffffff 100%)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center', gap: '20px' }}>
         <div style={{ position: 'relative' }}>
-          <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', width: '120px', height: '120px', background: 'rgba(124, 58, 237, 0.2)', filter: 'blur(30px)', borderRadius: '50%' }} />
-          <Landmark size={72} style={{ color: 'var(--accent)', position: 'relative', filter: 'drop-shadow(0 0 15px var(--primary))' }} />
+          <Landmark size={72} style={{ color: 'var(--primary)' }} />
         </div>
         <div>
-          <h3 style={{ fontSize: '1.25rem', fontWeight: 700, marginBottom: '8px' }}>Security & Ease</h3>
+          <h3 style={{ fontSize: '1.25rem', fontWeight: 700, marginBottom: '8px', color: 'var(--text-primary)' }}>Security & Ease</h3>
           <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', lineHeight: 1.5, maxWidth: '240px', margin: '0 auto' }}>
             Open checking & savings accounts in seconds and configure automated two-factor safety immediately.
           </p>
